@@ -1,24 +1,26 @@
-package com.pigcanfly.concurrency.container;
+package com.pigcanfly.concurrency.sync;
 
-import com.google.common.collect.Maps;
 import com.pigcanfly.concurrency.annotations.NotThreadSafe;
+import com.pigcanfly.concurrency.annotations.ThreadSafe;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 @Slf4j
-@NotThreadSafe
-public class ContainerExample {
+@ThreadSafe
+public class SyncExample {
 
     private final static Integer TOTAL = 5000;
     private final static Integer PER_NUMBER = 50;
     private final static CountDownLatch countDownLatch = new CountDownLatch(TOTAL);
     private final static Semaphore semaphore = new Semaphore(PER_NUMBER);
-    private static Map<String, Integer> count = Maps.newHashMap();
-
+    private static Map<String, Integer> count = Collections.synchronizedMap(new HashMap<>());
 
     public static void start() throws InterruptedException {
         ExecutorService executors = Executors.newCachedThreadPool();
@@ -26,7 +28,6 @@ public class ContainerExample {
             final int temp = i;
             executors.submit(() -> {
                 try {
-
                     semaphore.acquire();
                     update(temp);
                     semaphore.release();
@@ -49,6 +50,6 @@ public class ContainerExample {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ContainerExample.start();
+        SyncExample.start();
     }
 }
