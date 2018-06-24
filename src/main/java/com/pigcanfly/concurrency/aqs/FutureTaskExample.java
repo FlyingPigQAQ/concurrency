@@ -12,7 +12,7 @@ public class FutureTaskExample {
         final ExecutorService service = Executors.newCachedThreadPool();
         final FutureTask<String> future = new FutureTask<String>(()->{
             log.info("Compute in running");
-            Thread.sleep(5000);
+            Thread.sleep(2000);
             return "Done";
         });
         service.submit(future);
